@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 
-namespace LegacyApp
+namespace LegacyApp.Services
 {
     [GeneratedCode("System.ServiceModel", "4.0.0.0")]
     [ServiceContract(ConfigurationName =  "LegacyApp.IUserCreditService")]
