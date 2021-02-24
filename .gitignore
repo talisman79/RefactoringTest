@@ -1,0 +1,7 @@
+﻿/LegacyApp/obj
+/LegacyApp/bin
+/LegacyApp.Consumer/obj
+/LegacyApp.Consumer/bin
+.vs
+.idea
+/RefactoringTest.sln.DotSettings.user
