@@ -5,3 +5,5 @@
 .vs
 .idea
 /RefactoringTest.sln.DotSettings.user
+/RefactoringTest.UnitTests/bin/
+/RefactoringTest.UnitTests/obj/
