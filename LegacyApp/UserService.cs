@@ -39,7 +39,7 @@ namespace LegacyApp
                 return false;
             }
 
-            if (email.Contains("@") && !email.Contains("."))
+            if (!email.Contains("@") && !email.Contains("."))
             {
                 return false;
             }
