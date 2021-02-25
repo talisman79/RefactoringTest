@@ -6,6 +6,7 @@ using LegacyApp.DataAccess;
 using LegacyApp.Models;
 using LegacyApp.Repositories;
 using LegacyApp.Services;
+using LegacyApp.Validators;
 using NSubstitute;
 using Xunit;
 
@@ -22,7 +23,7 @@ namespace RefactoringTest.UnitTests
 
         public UserServiceTests()
         {
-            _sut = new UserService(_dateTimeProvider, _clientRepository, _userCreditService, _userDataAccess);
+            _sut = new UserService(_clientRepository, _userCreditService, _userDataAccess, new UserValidator(_dateTimeProvider));
         }
         
         [Fact]

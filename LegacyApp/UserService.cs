@@ -3,56 +3,39 @@ using LegacyApp.DataAccess;
 using LegacyApp.Models;
 using LegacyApp.Repositories;
 using LegacyApp.Services;
+using LegacyApp.Validators;
 
 namespace LegacyApp
 {
     public class UserService
     {
-        private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IClientRepository _clientRepository;
         private readonly IUserCreditService _userCreditService;
         private readonly IUserDataAccess _userDataAccess;
+        private readonly UserValidator _userValidator;
 
         public UserService(
-            IDateTimeProvider dateTimeProvider, 
             IClientRepository clientRepository, 
             IUserCreditService userCreditService, 
-            IUserDataAccess userDataAccess)
+            IUserDataAccess userDataAccess,
+            UserValidator userValidator)
         {
-            _dateTimeProvider = dateTimeProvider;
             _clientRepository = clientRepository;
             _userCreditService = userCreditService;
             _userDataAccess = userDataAccess;
+            _userValidator = userValidator;
         }
         
         public UserService() : 
-            this(new DateTimeProvider(),
-                new ClientRepository(),
+            this(new ClientRepository(),
                 new UserCreditServiceClient(),
-                new UserDataAccessProxy())
+                new UserDataAccessProxy(),
+                new UserValidator(new DateTimeProvider()))
         {}
 
         public bool AddUser(string firname, string surname, string email, DateTime dateOfBirth, int clientId)
         {
-            if (string.IsNullOrEmpty(firname) || string.IsNullOrEmpty(surname))
-            {
-                return false;
-            }
-
-            if (!email.Contains("@") && !email.Contains("."))
-            {
-                return false;
-            }
-
-            var now = _dateTimeProvider.DateTimeNow;
-            int age = now.Year - dateOfBirth.Year;
-
-            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day))
-            {
-                age--;
-            }
-
-            if (age < 21)
+            if (!UserProvidedDataIsValid(firname, surname, email, dateOfBirth))
             {
                 return false;
             }
@@ -89,12 +72,32 @@ namespace LegacyApp
                 user.CreditLimit = creditLimit;
             }
 
-            if (user.HasCreditLimit && user.CreditLimit < 500)
+            if (_userValidator.HasCreditLimitAndLimitIsLessThan500(user))
             {
                 return false;
             }
             
             _userDataAccess.AddUser(user);
+
+            return true;
+        }
+
+        private bool UserProvidedDataIsValid(string firname, string surname, string email, DateTime dateOfBirth)
+        {
+            if (!_userValidator.HasValidFullName(firname, surname))
+            {
+                return false;
+            }
+
+            if (!_userValidator.HasValidEmail(email))
+            {
+                return false;
+            }
+
+            if (!_userValidator.IsUserIsAtLeast21YearsOld(dateOfBirth))
+            {
+                return false;
+            }
 
             return true;
         }
