@@ -2,6 +2,7 @@ using System;
 using AutoFixture;
 using FluentAssertions;
 using LegacyApp;
+using LegacyApp.CreditProviders;
 using LegacyApp.DataAccess;
 using LegacyApp.Models;
 using LegacyApp.Repositories;
@@ -23,7 +24,7 @@ namespace RefactoringTest.UnitTests
 
         public UserServiceTests()
         {
-            _sut = new UserService(_clientRepository, _userCreditService, _userDataAccess, new UserValidator(_dateTimeProvider));
+            _sut = new UserService(_clientRepository, _userDataAccess, new UserValidator(_dateTimeProvider), new CreditLimitProviderFactory(_userCreditService));
         }
         
         [Fact]
